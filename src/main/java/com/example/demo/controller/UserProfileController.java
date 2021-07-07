@@ -6,8 +6,10 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 // 유저 관련 api를 처리해주는 컨트롤러
@@ -46,7 +48,7 @@ public class UserProfileController {
 		return new ArrayList<UserProfile>(userMap.values());
 	}
 	
-	// 수정 api
+	// 추가 api
 	@PutMapping("/user/{id}")
 	public void putUserProfile
 	// 이름, 번호, 주소를 파라미터로 전달받고
@@ -56,7 +58,37 @@ public class UserProfileController {
 			//id를 key로 하는 userProfile객체를 추가한다
 			userMap.put(id , userProfile);
 	}
+	// http://localhost:8080/user/4?name=홍길철&phone=111-1114&address=서울 강남구 대치4
+	// 이런식으로 포스트맨으로 put요청을 보내면 4번째 유저가 데이터에 저장된다
+	
+	//수정
+	@PostMapping("/user/{id}")
+	public void postUserProfile (@PathVariable("id") String id, @RequestParam("name") String name, @RequestParam("phone") String phone, @RequestParam("address") String address ) {
+		// 받은 id로 사용자 객체를 찾아서
+		UserProfile userProfile = userMap.get(id);
+		//setName같은 함수?는 클래스만들때 spring의 source에서 generate~~ 로 저절로 만들어진 것 같다
+		userProfile.setName(name);
+		userProfile.setPhone(phone);
+		userProfile.setAddress(address);
+		
+	}
+	// http://localhost:8080/user/2?name=원더&phone=코딩&address=라이크 
+	// post 요청을 날려보면 수정이 매우 잘됨
 	
 	
+	//삭제
+	
+	@DeleteMapping("/user/{id}")
+	public void deleteUserProfile(@PathVariable("id") String id) {
+		userMap.remove(id);
+		
+	}
+	
+	// http://localhost:8080/user/2
+	// delete 요청시 2번 유저 데이터 삭제
 }
+
+
+
+
 
